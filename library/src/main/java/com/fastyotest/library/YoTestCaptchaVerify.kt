@@ -35,7 +35,13 @@ class YoTestCaptchaVerify(private var context: Activity, private var listener: Y
             userAgentString += "YoTest_Android/${YoTestCaptcha.getInitResponse()!!.version}"
         }
         webView.visibility = View.VISIBLE
+        webView.addJavascriptInterface(YoTestJSBridge(), "YoTestCaptcha")
         webView.loadUrl(YoTestCaptcha.getInitResponse()!!.webview)
+    }
+
+    fun cancel() {
+        webView.removeJavascriptInterface("YoTestCaptcha")
+        webView.visibility = View.GONE
     }
 
     /**
@@ -62,7 +68,6 @@ class YoTestCaptchaVerify(private var context: Activity, private var listener: Y
             domStorageEnabled = true
             cacheMode = WebSettings.LOAD_NO_CACHE
         }
-        webView.addJavascriptInterface(YoTestJSBridge(), "YoTestCaptcha")
         webView.webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)
