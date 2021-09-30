@@ -16,6 +16,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var viewBinding: ActivityMainBinding
     private lateinit var yoTestCaptchaVerify: YoTestCaptchaVerify
+    private var count = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,7 +24,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(viewBinding.root)
         yoTestCaptchaVerify = YoTestCaptchaVerify(this, yoTestListener)
         viewBinding.btnLogin.setOnClickListener {
+            count = System.currentTimeMillis()
+            viewBinding.tvInitResult.append("webview  VISIBLE\n")
             yoTestCaptchaVerify.verify()
+
         }
         viewBinding.btnInit.setOnClickListener {
             YoTestCaptcha.init(
@@ -31,7 +35,7 @@ class MainActivity : AppCompatActivity() {
                 "4297f44b13955235245b2497399d7a93"
             ) { code, message ->
                 viewBinding.root.post {
-                    viewBinding.tvInitResult.append("code: $code;   message: $message\n")
+                    viewBinding.tvInitResult.append("init code: $code;   message: $message\n")
                 }
             }
         }
@@ -41,6 +45,7 @@ class MainActivity : AppCompatActivity() {
     private val yoTestListener = object : YoTestListener() {
         override fun onReady(data: String?) {
             Log.d(TAG, "onReady: $data")
+            viewBinding.tvInitResult.append("onReady $data  ${System.currentTimeMillis() - count}\n")
         }
 
         override fun onSuccess(token: String, verified: Boolean) {

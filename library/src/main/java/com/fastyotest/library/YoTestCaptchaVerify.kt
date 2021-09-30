@@ -12,6 +12,8 @@ import java.io.File
 
 /**
  * Description: 展示验证码并进行验证
+ * todo 改成添加一个layout文件，设置灰色蒙层
+ * todo verify之后展示loading，onReady之后，取消loading
  * Created by: 2021/9/28 11:09 上午
  * Author: chendan
  */
@@ -34,7 +36,6 @@ class YoTestCaptchaVerify(private var context: Activity, private var listener: Y
         }
         webView.visibility = View.VISIBLE
         webView.loadUrl(YoTestCaptcha.getInitResponse()!!.webview)
-        webView.addJavascriptInterface(YoTestJSBridge(), "YoTestCaptcha")
     }
 
     /**
@@ -61,9 +62,13 @@ class YoTestCaptchaVerify(private var context: Activity, private var listener: Y
             domStorageEnabled = true
             cacheMode = WebSettings.LOAD_NO_CACHE
         }
+        webView.addJavascriptInterface(YoTestJSBridge(), "YoTestCaptcha")
         webView.webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)
+                view?.post {
+                    listener?.onReady("onPageFinished")
+                }
 
                 view?.evaluateJavascript("javascript:verify(${buildScriptParams()})") {
                     Log.d("onPageFinished", "evaluateJavascript received:$it")
