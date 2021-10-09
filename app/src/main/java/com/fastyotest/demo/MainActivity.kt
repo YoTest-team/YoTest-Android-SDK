@@ -2,6 +2,8 @@ package com.fastyotest.demo
 
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.fastyotest.demo.databinding.ActivityMainBinding
 import com.fastyotest.library.YoTestCaptcha
@@ -22,13 +24,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         viewBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
-        yoTestCaptchaVerify = YoTestCaptchaVerify(this, yoTestListener)
-        viewBinding.btnLogin.setOnClickListener {
-            count = System.currentTimeMillis()
-            viewBinding.tvInitResult.append("webview  VISIBLE\n")
-            yoTestCaptchaVerify.verify()
-
-        }
+        // 初始化
         viewBinding.btnInit.setOnClickListener {
             YoTestCaptcha.init(
                 this.applicationContext,
@@ -39,7 +35,27 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+        // activity add view
+        yoTestCaptchaVerify = YoTestCaptchaVerify(this, yoTestListener)
+        viewBinding.btnLogin.setOnClickListener {
+            count = System.currentTimeMillis()
+            viewBinding.tvInitResult.append("webview  VISIBLE\n")
+            yoTestCaptchaVerify.verify()
 
+        }
+        // dialog
+        viewBinding.btnLoginDialog.setOnClickListener {
+            // todo 弹窗
+            Toast.makeText(this, "未完", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK && yoTestCaptchaVerify.isShow()) {
+            yoTestCaptchaVerify.cancel()
+            return true
+        }
+        return super.onKeyDown(keyCode, event)
     }
 
     private val yoTestListener = object : YoTestListener() {
@@ -50,6 +66,7 @@ class MainActivity : AppCompatActivity() {
 
         override fun onSuccess(token: String, verified: Boolean) {
             Log.d(TAG, "onSuccess: token=$token; verified=$verified")
+            viewBinding.tvInitResult.append("onSuccess  ${System.currentTimeMillis() - count}\n")
         }
 
         override fun onError(code: Int, message: String) {

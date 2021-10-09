@@ -2,65 +2,78 @@ package com.fastyotest.library
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.graphics.drawable.AnimationDrawable
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.*
-import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.Toast
 import org.json.JSONObject
 import java.io.File
 
 /**
  * Description: 展示验证码并进行验证
- * todo 改成添加一个layout文件，设置灰色蒙层
- * todo verify之后展示loading，onReady之后，取消loading
+ * 添加一个layout文件，设置灰色蒙层
+ * verify之后展示loading，onReady之后，取消loading
  * Created by: 2021/9/28 11:09 上午
  * Author: chendan
  */
 class YoTestCaptchaVerify(private var context: Activity, private var listener: YoTestListener?) {
-    private val webView: WebView = WebView(context)
+    @SuppressLint("InflateParams")
+    private val panel: View = LayoutInflater.from(context)
+        .inflate(R.layout.include_yotest_captcha, null)
+    private val webView: WebView = panel.findViewById(R.id.web_view)
+    private val imgLoading: ImageView = panel.findViewById(R.id.img_loading)
+    private val animationDrawable: AnimationDrawable = imgLoading.background as AnimationDrawable
 
     init {
+        (context.findViewById(android.R.id.content) as ViewGroup).addView(panel)
+        panel.visibility = View.GONE
         initWebView()
     }
 
     fun verify() {
         if (!YoTestCaptcha.initStatus()) {
             Log.d(TAG, "init failed")
-            webView.visibility = View.GONE
+            cancel()
             listener?.onError(-1, "init failed")
             return
         }
+
+        panel.visibility = View.VISIBLE
+        imgLoading.visibility = View.VISIBLE
+        animationDrawable.start()
         webView.settings.apply {
             userAgentString += "YoTest_Android/${YoTestCaptcha.getInitResponse()!!.version}"
         }
-        webView.visibility = View.VISIBLE
         webView.addJavascriptInterface(YoTestJSBridge(), "YoTestCaptcha")
         webView.loadUrl(YoTestCaptcha.getInitResponse()!!.webview)
     }
 
+    fun isShow(): Boolean {
+        return panel.visibility == View.VISIBLE
+    }
+
     fun cancel() {
+        hideLoading()
         webView.removeJavascriptInterface("YoTestCaptcha")
-        webView.visibility = View.GONE
+        panel.visibility = View.GONE
     }
 
     /**
      * 销毁资源
      */
     fun onDestroy() {
+        cancel()
         webView.destroy()
     }
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun initWebView() {
-        webView.layoutParams = FrameLayout.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.MATCH_PARENT
-        )
         webView.setBackgroundColor(0)
         webView.background?.alpha = 0
-        webView.visibility = View.GONE
-        (context.findViewById(android.R.id.content) as ViewGroup).addView(webView)
         webView.settings.apply {
             javaScriptEnabled = true
             useWideViewPort = true
@@ -139,6 +152,13 @@ class YoTestCaptchaVerify(private var context: Activity, private var listener: Y
         return jsonObject.toString()
     }
 
+    private fun hideLoading() {
+        if (animationDrawable.isRunning) {
+            animationDrawable.stop()
+        }
+        imgLoading.visibility = View.GONE
+    }
+
     private inner class YoTestJSBridge {
 
         @JavascriptInterface
@@ -147,23 +167,26 @@ class YoTestCaptchaVerify(private var context: Activity, private var listener: Y
             val action = jsonObject.optString("action")
             val data = jsonObject.optJSONObject("data")
             when (action) {
-                "onReady" -> webView.post {
+                "onReady" -> panel.post {
                     listener?.onReady(data?.toString())
                 }
-                "onSuccess" -> webView.post {
-                    webView.visibility = View.GONE
+                "onShow" -> panel.post {
+                    hideLoading()
+                }
+                "onSuccess" -> panel.post {
+                    cancel()
+                    Toast.makeText(context, "验证已通过", Toast.LENGTH_SHORT).show()
                     listener?.onSuccess(
                         data?.optString("token")!!,
                         data.optBoolean("verified")
                     )
                 }
-
-                "onError" -> webView.post {
-                    webView.visibility = View.GONE
+                "onError" -> panel.post {
+                    cancel()
                     listener?.onError(data?.optInt("code")!!, data.optString("message"))
                 }
-                "onClose" -> webView.post {
-                    webView.visibility = View.GONE
+                "onClose" -> panel.post {
+                    cancel()
                     listener?.onClose(data?.toString())
                 }
             }
