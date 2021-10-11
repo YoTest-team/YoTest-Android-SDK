@@ -3,11 +3,11 @@ package com.fastyotest.demo
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.fastyotest.demo.databinding.ActivityMainBinding
 import com.fastyotest.library.YoTestCaptcha
 import com.fastyotest.library.YoTestCaptchaVerify
+import com.fastyotest.library.YoTestCaptchaVerifyDialog
 import com.fastyotest.library.YoTestListener
 
 class MainActivity : AppCompatActivity() {
@@ -18,6 +18,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var viewBinding: ActivityMainBinding
     private lateinit var yoTestCaptchaVerify: YoTestCaptchaVerify
+    private lateinit var yoTestCaptchaDialog: YoTestCaptchaVerifyDialog
     private var count = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,9 +45,11 @@ class MainActivity : AppCompatActivity() {
 
         }
         // dialog
+        yoTestCaptchaDialog =
+            YoTestCaptchaVerifyDialog().apply { setActionClickListener(yoTestListener) }
         viewBinding.btnLoginDialog.setOnClickListener {
             // todo 弹窗
-            Toast.makeText(this, "未完", Toast.LENGTH_SHORT).show()
+            yoTestCaptchaDialog.show(supportFragmentManager, "YoTestCaptchaVerifyDialog")
         }
     }
 

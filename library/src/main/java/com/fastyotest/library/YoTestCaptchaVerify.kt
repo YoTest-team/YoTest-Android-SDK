@@ -10,8 +10,9 @@ import android.view.ViewGroup
 import android.webkit.*
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
+import com.fastyotest.library.utils.VerifyUtils
 import org.json.JSONObject
-import java.io.File
 
 /**
  * Description: 展示验证码并进行验证
@@ -25,15 +26,24 @@ class YoTestCaptchaVerify(private var context: Activity, private var listener: Y
     private val panel: View = LayoutInflater.from(context)
         .inflate(R.layout.include_yotest_captcha, null)
     private val webView: WebView = panel.findViewById(R.id.web_view)
-    private val imgLoading: ImageView = panel.findViewById(R.id.img_loading)
-    private val animationDrawable: AnimationDrawable = imgLoading.background as AnimationDrawable
+    private val loadingPanel: ConstraintLayout = panel.findViewById(R.id.loading_panel)
+    private val animationDrawable: AnimationDrawable
 
     init {
+        val imgLoading: ImageView = panel.findViewById(R.id.img_loading)
+        animationDrawable = imgLoading.background as AnimationDrawable
         (context.findViewById(android.R.id.content) as ViewGroup).addView(panel)
+        loadingPanel.setOnClickListener {
+            cancel()
+            listener?.onClose("用户主动关闭")
+        }
         panel.visibility = View.GONE
         initWebView()
     }
 
+    /**
+     * 开始进行智能验证
+     */
     fun verify() {
         if (!YoTestCaptcha.initStatus()) {
             Log.d(TAG, "init failed")
@@ -43,7 +53,7 @@ class YoTestCaptchaVerify(private var context: Activity, private var listener: Y
         }
 
         panel.visibility = View.VISIBLE
-        imgLoading.visibility = View.VISIBLE
+        loadingPanel.visibility = View.VISIBLE
         animationDrawable.start()
         webView.settings.apply {
             userAgentString += "YoTest_Android/${YoTestCaptcha.getInitResponse()!!.version}"
@@ -52,13 +62,21 @@ class YoTestCaptchaVerify(private var context: Activity, private var listener: Y
         webView.loadUrl(YoTestCaptcha.getInitResponse()!!.webview)
     }
 
+    /**
+     * 判断验证页面是否展示
+     */
     fun isShow(): Boolean {
         return panel.visibility == View.VISIBLE
     }
 
+    /**
+     * 取消，停止动画，隐藏页面
+     */
     fun cancel() {
         hideLoading()
         webView.removeJavascriptInterface("YoTestCaptcha")
+        webView.stopLoading()
+        webView.loadUrl("")
         panel.visibility = View.GONE
     }
 
@@ -88,7 +106,7 @@ class YoTestCaptchaVerify(private var context: Activity, private var listener: Y
                     listener?.onReady("onPageFinished")
                 }
 
-                view?.evaluateJavascript("javascript:verify(${buildScriptParams()})") {
+                view?.evaluateJavascript("javascript:verify(${VerifyUtils.buildScriptParams()})") {
                     Log.d("onPageFinished", "evaluateJavascript received:$it")
                 }
             }
@@ -103,18 +121,24 @@ class YoTestCaptchaVerify(private var context: Activity, private var listener: Y
                 // 替换成本地的资源
                 when {
                     url.contains(YoTestCaptcha.getInitResponse()!!.lib) -> {
-                        return checkInterceptRequest(
-                            YoTestCaptcha.getInitResponse()!!.lib, "text/javascript"
+                        return VerifyUtils.checkInterceptRequest(
+                            context.externalCacheDir,
+                            YoTestCaptcha.getInitResponse()!!.lib,
+                            "text/javascript"
                         )
                     }
                     url.contains(YoTestCaptcha.getInitResponse()!!.binary) -> {
-                        return checkInterceptRequest(
-                            YoTestCaptcha.getInitResponse()!!.binary, "application/json"
+                        return VerifyUtils.checkInterceptRequest(
+                            context.externalCacheDir,
+                            YoTestCaptcha.getInitResponse()!!.binary,
+                            "application/json"
                         )
                     }
                     url.contains(YoTestCaptcha.getInitResponse()!!.localWebview) -> {
-                        return checkInterceptRequest(
-                            YoTestCaptcha.getInitResponse()!!.localWebview, "text/html"
+                        return VerifyUtils.checkInterceptRequest(
+                            context.externalCacheDir,
+                            YoTestCaptcha.getInitResponse()!!.localWebview,
+                            "text/html"
                         )
                     }
                 }
@@ -123,40 +147,11 @@ class YoTestCaptchaVerify(private var context: Activity, private var listener: Y
         }
     }
 
-    private fun checkInterceptRequest(
-        newUrl: String,
-        mineType: String
-    ): WebResourceResponse? {
-        if (newUrl.startsWith("https")) {
-            return null
-        }
-
-        try {
-            val file = File(context.externalCacheDir, newUrl)
-            if (file.exists()) {
-                val inputStream = file.inputStream()
-                return WebResourceResponse(mineType, "UTF-8", inputStream)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-
-        return null
-    }
-
-    private fun buildScriptParams(): String {
-        val jsonObject = JSONObject()
-        jsonObject.put("accessId", YoTestCaptcha.getAccessId())
-        jsonObject.put("platform", "android")
-        jsonObject.put("product", "bind")
-        return jsonObject.toString()
-    }
-
     private fun hideLoading() {
         if (animationDrawable.isRunning) {
             animationDrawable.stop()
         }
-        imgLoading.visibility = View.GONE
+        loadingPanel.visibility = View.GONE
     }
 
     private inner class YoTestJSBridge {
@@ -175,7 +170,7 @@ class YoTestCaptchaVerify(private var context: Activity, private var listener: Y
                 }
                 "onSuccess" -> panel.post {
                     cancel()
-                    Toast.makeText(context, "验证已通过", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "已通过友验智能验证", Toast.LENGTH_SHORT).show()
                     listener?.onSuccess(
                         data?.optString("token")!!,
                         data.optBoolean("verified")
