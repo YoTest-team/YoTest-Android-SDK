@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.KeyEvent
 import androidx.appcompat.app.AppCompatActivity
 import com.fastyotest.demo.databinding.ActivityMainBinding
-import com.fastyotest.library.YoTestCaptcha
 import com.fastyotest.library.YoTestCaptchaVerify
 import com.fastyotest.library.YoTestCaptchaVerifyDialog
 import com.fastyotest.library.YoTestListener
@@ -25,17 +24,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         viewBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
-        // 初始化
-        viewBinding.btnInit.setOnClickListener {
-            YoTestCaptcha.init(
-                this.applicationContext,
-                "4297f44b13955235245b2497399d7a93"
-            ) { code, message ->
-                viewBinding.root.post {
-                    viewBinding.tvInitResult.append("init code: $code;   message: $message\n")
-                }
-            }
-        }
         // activity add view
         yoTestCaptchaVerify = YoTestCaptchaVerify(this, yoTestListener)
         viewBinding.btnLogin.setOnClickListener {
@@ -48,7 +36,7 @@ class MainActivity : AppCompatActivity() {
         yoTestCaptchaDialog =
             YoTestCaptchaVerifyDialog().apply { setActionClickListener(yoTestListener) }
         viewBinding.btnLoginDialog.setOnClickListener {
-            // todo 弹窗
+            // 弹窗
             yoTestCaptchaDialog.show(supportFragmentManager, "YoTestCaptchaVerifyDialog")
         }
     }
@@ -74,6 +62,7 @@ class MainActivity : AppCompatActivity() {
 
         override fun onError(code: Int, message: String) {
             Log.d(TAG, "onError: code=$code; message=$message")
+            viewBinding.tvInitResult.append("onError $message \n")
         }
 
         override fun onClose(data: String?) {
