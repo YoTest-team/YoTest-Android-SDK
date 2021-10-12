@@ -95,7 +95,7 @@ yoTestCaptchaVerify.verify()
 // 在使用页面的生活周期方法中销毁资源
 override fun onDestroy() {
     super.onDestroy()
-    yoTestCaptchaVerify.onDestroy()
+    yoTestCaptchaVerify.destory()
 }
 
 ```
@@ -111,7 +111,7 @@ YoTestCaptchaVerify实例方法
 
 * [YoTestCaptchaVerify(context, listener)](https://github.com/YoTest-team/YoTest-Android-SDK#YoTestCaptchaVerifycontext-listener)
 * [verify()](https://github.com/YoTest-team/YoTest-Android-SDK#YoTestCaptchaVerifyverify)
-* [onDestory()](https://github.com/YoTest-team/YoTest-Android-SDK#YoTestCaptchaVerifydestory)
+* [destroy()](https://github.com/YoTest-team/YoTest-Android-SDK#YoTestCaptchaVerifydestory)
 
 YoTestListener实例方法
 
