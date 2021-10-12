@@ -14,7 +14,7 @@ class MyApplication : Application() {
         super.onCreate()
         YoTestCaptcha.init(
             this.applicationContext,
-            "4297f44b13955235245b2497399d7a93"
+            "0ce98f5fc3f2ffbd731b6b8bbf9e4992"
         ) { code, message ->
             Log.d("MyApplication", "YoTestCaptcha init $message")
         }
