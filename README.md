@@ -4,16 +4,22 @@ YoTest-Android-SDK 文档
 
 * [仓库入口](https://github.com/YoTest-team/YoTest-Android-SDK#%E4%BB%93%E5%BA%93%E5%85%A5%E5%8F%A3)
 * [兼容性](https://github.com/YoTest-team/YoTest-Android-SDK#%E5%85%BC%E5%AE%B9%E6%80%A7)
+* [示例项目](https://github.com/YoTest-team/YoTest-Android-SDK#%E7%A4%BA%E4%BE%8B%E9%A1%B9%E7%9B%AE)
 * [安装](https://github.com/YoTest-team/YoTest-Android-SDK#%E5%AE%89%E8%A3%85)
 * [快速开始](https://github.com/YoTest-team/YoTest-Android-SDK#%E5%BF%AB%E9%80%9F%E5%BC%80%E5%A7%8B)
 * [API](https://github.com/YoTest-team/YoTest-Android-SDK#api)
 
 
 ### 仓库入口：
+<a href="https://gitee.com/yo-test-team/yo-test-android-sdk"><img src="./images/gitee2.png" width="32px"/></a>
 <a href="https://github.com/YoTest-team/YoTest-Android-SDK"><img src="./images/GitHub.png" width="32px"/></a>
 
 ### 兼容性
 * Android 4.4+ （即API 19+）
+
+### 示例项目
+
+你可以通过Android Studio 4+打开本项目进行示例项目的预览和更改，具体文件请[点击此处](https://github.com/YoTest-team/YoTest-Android-SDK/tree/master/app/src/main/java/com/fastyotest/demo)。
 
 ### 安装
 
@@ -89,7 +95,7 @@ yoTestCaptchaVerify.verify()
 // 在使用页面的生活周期方法中销毁资源
 override fun onDestroy() {
     super.onDestroy()
-    yoTestCaptchaVerify.onDestroy()
+    yoTestCaptchaVerify.destroy()
 }
 
 ```
@@ -105,7 +111,7 @@ YoTestCaptchaVerify实例方法
 
 * [YoTestCaptchaVerify(context, listener)](https://github.com/YoTest-team/YoTest-Android-SDK#YoTestCaptchaVerifycontext-listener)
 * [verify()](https://github.com/YoTest-team/YoTest-Android-SDK#YoTestCaptchaVerifyverify)
-* [onDestory()](https://github.com/YoTest-team/YoTest-Android-SDK#YoTestCaptchaVerifydestory)
+* [destroy()](https://github.com/YoTest-team/YoTest-Android-SDK#YoTestCaptchaVerifydestory)
 
 YoTestListener实例方法
 
@@ -123,6 +129,7 @@ YoTestListener实例方法
     - **message**: \<String\> 提示信息
   - `return:` Unit
 
+一般情况下我们会将init方法放在Application onCreate时进行触发，如果有其他业务相关需求，**请一定确保init方法在verify方法之前调用完成**。
 
 ```kotlin
 YoTestCaptcha.init(
@@ -153,13 +160,13 @@ yoTestCaptchaVerify = YoTestCaptchaVerify(this, yoTestListener)
 yoTestCaptchaVerify.verify()
 ```
 
-#### YoTestCaptchaVerify.destory()
+#### YoTestCaptchaVerify.destroy()
 - `return`: Unit
 
 用于销毁相关资源
 
 ```kotlin
-yoTestCaptchaVerify.destory()
+yoTestCaptchaVerify.destroy()
 ```
 
 #### YoTestListener.onReady(data)
