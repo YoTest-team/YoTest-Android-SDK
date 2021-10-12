@@ -169,7 +169,7 @@ yoTestCaptchaVerify.destory()
 初始化成功的回调监听
 
 ```kotlin
-val yoTestCaptchaVerify = YoTestCaptchaVerify(this, object :YoTestListener(){
+val yoTestCaptchaVerify = YoTestCaptchaVerify(this, object : YoTestListener(){
     override fun onReady(data: String?) {
         Log.d(TAG, "onReady: $data")
     }
@@ -184,7 +184,7 @@ yoTestCaptchaVerify.verify()
 验证内容展现的回调监听
 
 ```kotlin
-val yoTestCaptchaVerify = YoTestCaptchaVerify(this, object :YoTestListener(){
+val yoTestCaptchaVerify = YoTestCaptchaVerify(this, object : YoTestListener(){
     override fun onShow(data: String?) {
         Log.d(TAG, "onShow: $data")
     }
@@ -200,7 +200,7 @@ yoTestCaptchaVerify.verify()
 验证成功的回调监听
 
 ```kotlin
-val yoTestCaptchaVerify = YoTestCaptchaVerify(this, object :YoTestListener(){
+val yoTestCaptchaVerify = YoTestCaptchaVerify(this, object : YoTestListener(){
     override fun onSuccess(token: String, verified: Boolean) {
         Log.d(TAG, "onSuccess: token=$token; verified=$verified")
     }
@@ -216,7 +216,7 @@ yoTestCaptchaVerify.verify()
 验证错误的回调监听
 
 ```kotlin
-val yoTestCaptchaVerify = YoTestCaptchaVerify(this, object :YoTestListener(){
+val yoTestCaptchaVerify = YoTestCaptchaVerify(this, object : YoTestListener(){
     override fun onError(code: Int, message: String) {
         Log.d(TAG, "onError: code=$code; message=$message")
     }
@@ -231,7 +231,7 @@ yoTestCaptchaVerify.verify()
 验证关闭的回调监听
 
 ```kotlin
-val yoTestCaptchaVerify = YoTestCaptchaVerify(this, object :YoTestListener(){
+val yoTestCaptchaVerify = YoTestCaptchaVerify(this, object : YoTestListener(){
     override fun onClose(data: String?) {
         Log.d(TAG, "onClose: $data")
     }

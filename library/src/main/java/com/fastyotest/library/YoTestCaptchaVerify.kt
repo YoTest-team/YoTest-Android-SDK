@@ -79,7 +79,7 @@ class YoTestCaptchaVerify(private val activity: Activity, private val listener: 
         hideLoading()
         webView.removeJavascriptInterface("YoTestCaptcha")
         webView.stopLoading()
-        webView.loadUrl("")
+        webView.visibility = View.GONE
         dialog?.hide()
     }
 
@@ -162,6 +162,7 @@ class YoTestCaptchaVerify(private val activity: Activity, private val listener: 
                 }
                 "onShow" -> panel.post {
                     hideLoading()
+                    webView.visibility = View.VISIBLE
                     listener?.onShow(data?.toString())
                 }
                 "onSuccess" -> panel.post {

@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
             yoTestCaptchaVerify.verify()
         }
 
-        val yoTestCaptchaVerify = YoTestCaptchaVerify(this, object :YoTestListener(){
+        val yoTestCaptchaVerify = YoTestCaptchaVerify(this, object : YoTestListener() {
             override fun onReady(data: String?) {
                 Log.d(TAG, "onReady: $data")
             }
