@@ -3,7 +3,6 @@ package com.fastyotest.library
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.graphics.drawable.AnimationDrawable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,13 +13,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.fastyotest.library.utils.VerifyUtils
 import org.json.JSONObject
 
-/**
- * Description: 展示验证码并进行验证
- * 添加一个layout文件，设置灰色蒙层
- * verify之后展示loading，onReady之后，取消loading
- * Created by: 2021/9/28 11:09 上午
- * Author: chendan
- */
 class YoTestCaptchaVerify(private var context: Activity, private var listener: YoTestListener?) {
     @SuppressLint("InflateParams")
     private val panel: View = LayoutInflater.from(context)
@@ -41,12 +33,8 @@ class YoTestCaptchaVerify(private var context: Activity, private var listener: Y
         initWebView()
     }
 
-    /**
-     * 开始进行智能验证
-     */
     fun verify() {
         if (!YoTestCaptcha.initStatus()) {
-            Log.d(TAG, "init failed")
             cancel()
             listener?.onError(-1, "init failed")
             return
@@ -62,16 +50,10 @@ class YoTestCaptchaVerify(private var context: Activity, private var listener: Y
         webView.loadUrl(YoTestCaptcha.getInitResponse()!!.webview)
     }
 
-    /**
-     * 判断验证页面是否展示
-     */
     fun isShow(): Boolean {
         return panel.visibility == View.VISIBLE
     }
 
-    /**
-     * 取消，停止动画，隐藏页面
-     */
     fun cancel() {
         hideLoading()
         webView.removeJavascriptInterface("YoTestCaptcha")
@@ -102,12 +84,7 @@ class YoTestCaptchaVerify(private var context: Activity, private var listener: Y
         webView.webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)
-                view?.post {
-                    listener?.onReady("onPageFinished")
-                }
-
                 view?.evaluateJavascript("javascript:verify(${VerifyUtils.buildScriptParams()})") {
-                    Log.d("onPageFinished", "evaluateJavascript received:$it")
                 }
             }
 
@@ -177,7 +154,6 @@ class YoTestCaptchaVerify(private var context: Activity, private var listener: Y
                     )
                 }
                 "onError" -> panel.post {
-                    cancel()
                     listener?.onError(data?.optInt("code")!!, data.optString("message"))
                 }
                 "onClose" -> panel.post {
@@ -186,9 +162,5 @@ class YoTestCaptchaVerify(private var context: Activity, private var listener: Y
                 }
             }
         }
-    }
-
-    companion object {
-        private const val TAG = "YoTestCaptchaVerify"
     }
 }

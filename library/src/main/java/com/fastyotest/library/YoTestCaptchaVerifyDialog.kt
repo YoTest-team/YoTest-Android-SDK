@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.graphics.drawable.AnimationDrawable
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,11 +16,6 @@ import androidx.lifecycle.LifecycleObserver
 import com.fastyotest.library.utils.VerifyUtils
 import org.json.JSONObject
 
-/**
- * Description: 弹窗
- * Created by: 2021/10/9 3:08 下午
- * Author: chendan
- */
 class YoTestCaptchaVerifyDialog : DialogFragment(), LifecycleObserver {
 
     private var webView: WebView? = null
@@ -78,7 +72,6 @@ class YoTestCaptchaVerifyDialog : DialogFragment(), LifecycleObserver {
 
     private fun verify() {
         if (!YoTestCaptcha.initStatus()) {
-            Log.d(TAG, "init failed")
             actionListener?.onError(-1, "init failed")
             dismiss()
             return
@@ -118,7 +111,6 @@ class YoTestCaptchaVerifyDialog : DialogFragment(), LifecycleObserver {
                 }
 
                 view?.evaluateJavascript("javascript:verify(${VerifyUtils.buildScriptParams()})") {
-                    Log.d("onPageFinished", "evaluateJavascript received:$it")
                 }
             }
 
@@ -182,7 +174,6 @@ class YoTestCaptchaVerifyDialog : DialogFragment(), LifecycleObserver {
                 }
                 "onError" -> webView?.post {
                     actionListener?.onError(data?.optInt("code")!!, data.optString("message"))
-                    dismiss()
                 }
                 "onClose" -> webView?.post {
                     actionListener?.onClose(data?.toString())
@@ -190,9 +181,5 @@ class YoTestCaptchaVerifyDialog : DialogFragment(), LifecycleObserver {
                 }
             }
         }
-    }
-
-    companion object {
-        private const val TAG = "YoTestCaptchaDialog"
     }
 }

@@ -6,11 +6,6 @@ import java.net.ProtocolException
 import java.net.URL
 import javax.net.ssl.HttpsURLConnection
 
-/**
- * Description: 网络请求
- * Created by: 2021/9/28 4:36 下午
- * Author: chendan
- */
 object NetworkUtils {
 
     fun sendRequest(api: String): String? {
@@ -44,11 +39,6 @@ object NetworkUtils {
         return null
     }
 
-    /**
-     * 下载文件
-     * @param url 文件下载地址
-     * @param file 缓存的文件
-     */
     fun downloadFile(url: String, file: File): Boolean {
         var contentLength = 0L
         var conn: HttpURLConnection? = null

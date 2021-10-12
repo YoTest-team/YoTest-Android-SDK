@@ -14,9 +14,7 @@ YoTest-Android-SDK 文档
 <a href="https://github.com/YoTest-team/YoTest-Android-SDK"><img src="./images/GitHub.png" width="32px"/></a>
 
 ### 兼容性
-> 以下兼容性根据[BrowserStack](https://live.browserstack.com/)的相关真机测试得出，仅供参考
-
-* Android 4.4+ （即API19及以上）
+* Android 4.4+ （即API 19+）
 
 ### 安装
 
@@ -58,6 +56,8 @@ YoTestCaptcha.init(
         Log.d("MyApplication", "YoTestCaptcha init $message")
 }
 ```
+
+在要使用的页面中
 
 ### 验证模式
 

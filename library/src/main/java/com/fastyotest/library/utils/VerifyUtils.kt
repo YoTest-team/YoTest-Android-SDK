@@ -5,11 +5,6 @@ import com.fastyotest.library.YoTestCaptcha
 import org.json.JSONObject
 import java.io.File
 
-/**
- * Description:  工具
- * Created by: 2021/10/11 10:01 上午
- * Author: chendan
- */
 object VerifyUtils {
     fun checkInterceptRequest(
         parentFile: File?,
