@@ -95,7 +95,7 @@ yoTestCaptchaVerify.verify()
 // 在使用页面的生活周期方法中销毁资源
 override fun onDestroy() {
     super.onDestroy()
-    yoTestCaptchaVerify.destory()
+    yoTestCaptchaVerify.destroy()
 }
 
 ```
