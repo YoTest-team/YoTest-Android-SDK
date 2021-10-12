@@ -25,11 +25,22 @@ class MainActivity : AppCompatActivity() {
         viewBinding.btnLogin.setOnClickListener {
             yoTestCaptchaVerify.verify()
         }
+
+        val yoTestCaptchaVerify = YoTestCaptchaVerify(this, object :YoTestListener(){
+            override fun onReady(data: String?) {
+                Log.d(TAG, "onReady: $data")
+            }
+        })
+        yoTestCaptchaVerify.verify()
     }
 
     private val yoTestListener = object : YoTestListener() {
         override fun onReady(data: String?) {
             Log.d(TAG, "onReady: $data")
+        }
+
+        override fun onShow(data: String?) {
+            Log.d(TAG, "onShow: $data")
         }
 
         override fun onSuccess(token: String, verified: Boolean) {
@@ -48,6 +59,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        yoTestCaptchaVerify.onDestroy()
+        yoTestCaptchaVerify.destroy()
     }
 }

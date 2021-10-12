@@ -6,7 +6,6 @@ YoTest-Android-SDK 文档
 * [兼容性](https://github.com/YoTest-team/YoTest-Android-SDK#%E5%85%BC%E5%AE%B9%E6%80%A7)
 * [安装](https://github.com/YoTest-team/YoTest-Android-SDK#%E5%AE%89%E8%A3%85)
 * [快速开始](https://github.com/YoTest-team/YoTest-Android-SDK#%E5%BF%AB%E9%80%9F%E5%BC%80%E5%A7%8B)
-* [验证模式](https://github.com/YoTest-team/YoTest-Android-SDK#%E9%AA%8C%E8%AF%81%E6%A8%A1%E5%BC%8F)
 * [API](https://github.com/YoTest-team/YoTest-Android-SDK#api)
 
 
@@ -57,9 +56,7 @@ YoTestCaptcha.init(
 }
 ```
 
-在要使用的页面中
-
-### 验证模式
+在要使用的页面中添加：
 
 ```kotlin
 import com.fastyotest.library.YoTestCaptchaVerify
@@ -89,13 +86,10 @@ private val yoTestCaptchaVerify = YoTestCaptchaVerify(this, yoTestListener)
 // 进行验证
 yoTestCaptchaVerify.verify()
 
-// 支持点击蒙层取消验证，建议加上以下方法，实现点击物理返回键/滑动返回取消验证，而不是返回上一页
-override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-    if (keyCode == KeyEvent.KEYCODE_BACK && yoTestCaptchaVerify.isShow()) {
-        yoTestCaptchaVerify.cancel()
-        return true
-    }
-    return super.onKeyDown(keyCode, event)
+// 在使用页面的生活周期方法中销毁资源
+override fun onDestroy() {
+    super.onDestroy()
+    yoTestCaptchaVerify.onDestroy()
 }
 
 ```
@@ -103,18 +97,25 @@ override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
 
 ### API
 
-初始化函数
+YoTestCaptcha初始化函数
 
-* [init(context, accessId, callback)](https://github.com/YoTest-team/YoTest-Android-SDK#initcontext-accessId-callback)
+* [YoTestCaptcha.init(context, accessId, callback)](https://github.com/YoTest-team/YoTest-Android-SDK#YoTestCaptchainitcontext-accessId-callback)
 
 YoTestCaptchaVerify实例方法
-需要先初始化
 
 * [YoTestCaptchaVerify(context, listener)](https://github.com/YoTest-team/YoTest-Android-SDK#YoTestCaptchaVerifycontext-listener)
 * [verify()](https://github.com/YoTest-team/YoTest-Android-SDK#YoTestCaptchaVerifyverify)
-* [onDestory()](https://github.com/YoTest-team/YoTest-Android-SDK#YoTestCaptchaVerifyverify)
+* [onDestory()](https://github.com/YoTest-team/YoTest-Android-SDK#YoTestCaptchaVerifydestory)
 
-#### init(context, accessId, callback)
+YoTestListener实例方法
+
+* [onReady()](https://github.com/YoTest-team/YoTest-Android-SDK#YoTestListeneronreadydata)
+* [onShow()](https://github.com/YoTest-team/YoTest-Android-SDK#YoTestListeneronshowdata)
+* [onSuccess()](https://github.com/YoTest-team/YoTest-Android-SDK#YoTestListeneronSuccesstoken-verified)
+* [onError()](https://github.com/YoTest-team/YoTest-Android-SDK#YoTestListeneronErrordatacode-message)
+* [onClose()](https://github.com/YoTest-team/YoTest-Android-SDK#YoTestListeneronclosedata)
+
+#### YoTestCaptcha.init(context, accessId, callback)
   - `context` \<Context\> 必填，ApplicationContext
   - `accessId ` \<String\> 必填，当前项目所属的accessId，可以在友验后台中进行相关获取及查看
   - `callback` \<Function\>
@@ -152,11 +153,88 @@ yoTestCaptchaVerify = YoTestCaptchaVerify(this, yoTestListener)
 yoTestCaptchaVerify.verify()
 ```
 
-#### YoTestCaptchaVerify.onDestory()
+#### YoTestCaptchaVerify.destory()
 - `return`: Unit
 
 用于销毁相关资源
 
 ```kotlin
-yoTestCaptchaVerify.onDestory()
+yoTestCaptchaVerify.destory()
+```
+
+#### YoTestListener.onReady(data)
+- `data` \<String?\> 可以为空
+- `return`: Unit
+
+初始化成功的回调监听
+
+```kotlin
+val yoTestCaptchaVerify = YoTestCaptchaVerify(this, object :YoTestListener(){
+    override fun onReady(data: String?) {
+        Log.d(TAG, "onReady: $data")
+    }
+})
+yoTestCaptchaVerify.verify()
+```
+
+#### YoTestListener.onShow(data)
+- `data` \<String?\> 可以为空
+- `return`: Unit
+
+验证内容展现的回调监听
+
+```kotlin
+val yoTestCaptchaVerify = YoTestCaptchaVerify(this, object :YoTestListener(){
+    override fun onShow(data: String?) {
+        Log.d(TAG, "onShow: $data")
+    }
+})
+yoTestCaptchaVerify.verify()
+```
+
+#### YoTestListener.onSuccess(token, verified)
+- `token` \<String\> 当前验证的凭证，需要提交给后端来进行是否通过判断
+- `verified` \<Boolean\> 是否验证成功
+- `return`: Unit
+
+验证成功的回调监听
+
+```kotlin
+val yoTestCaptchaVerify = YoTestCaptchaVerify(this, object :YoTestListener(){
+    override fun onSuccess(token: String, verified: Boolean) {
+        Log.d(TAG, "onSuccess: token=$token; verified=$verified")
+    }
+})
+yoTestCaptchaVerify.verify()
+```
+
+#### YoTestListener.onError(code, message)
+- `code` \<Int\> 错误码
+- `message` \<String\> 错误相关信息
+- `return`: Unit
+
+验证错误的回调监听
+
+```kotlin
+val yoTestCaptchaVerify = YoTestCaptchaVerify(this, object :YoTestListener(){
+    override fun onError(code: Int, message: String) {
+        Log.d(TAG, "onError: code=$code; message=$message")
+    }
+})
+yoTestCaptchaVerify.verify()
+```
+
+#### YoTestListener.onClose(data)
+- `data` \<String?\> 可以为空
+- `return`: Unit
+
+验证关闭的回调监听
+
+```kotlin
+val yoTestCaptchaVerify = YoTestCaptchaVerify(this, object :YoTestListener(){
+    override fun onClose(data: String?) {
+        Log.d(TAG, "onClose: $data")
+    }
+})
+yoTestCaptchaVerify.verify()
 ```

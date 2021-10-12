@@ -164,6 +164,7 @@ class YoTestCaptchaVerifyDialog : DialogFragment(), LifecycleObserver {
                 }
                 "onShow" -> webView?.post {
                     hideLoading()
+                    actionListener?.onShow(data?.toString())
                 }
                 "onSuccess" -> webView?.post {
                     Toast.makeText(context, "已通过友验智能验证", Toast.LENGTH_SHORT).show()

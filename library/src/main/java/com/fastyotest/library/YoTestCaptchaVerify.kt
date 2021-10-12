@@ -67,7 +67,7 @@ class YoTestCaptchaVerify(private val activity: Activity, private val listener: 
         dialog?.show()
     }
 
-    fun onDestroy() {
+    fun destroy() {
         hideVerify()
         dialog?.setOnDismissListener {
             webView.destroy()
@@ -162,6 +162,7 @@ class YoTestCaptchaVerify(private val activity: Activity, private val listener: 
                 }
                 "onShow" -> panel.post {
                     hideLoading()
+                    listener?.onShow(data?.toString())
                 }
                 "onSuccess" -> panel.post {
                     hideVerify()
