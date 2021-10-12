@@ -94,6 +94,7 @@ class YoTestCaptchaVerifyDialog : DialogFragment(), LifecycleObserver {
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun initWebView() {
+        CookieManager.getInstance().setAcceptCookie(true)
         webView?.setBackgroundColor(0)
         webView?.background?.alpha = 0
         webView?.settings?.apply {

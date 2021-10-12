@@ -2,12 +2,9 @@ package com.fastyotest.demo
 
 import android.os.Bundle
 import android.util.Log
-import android.view.KeyEvent
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.fastyotest.demo.databinding.ActivityMainBinding
 import com.fastyotest.library.YoTestCaptchaVerify
-import com.fastyotest.library.YoTestCaptchaVerifyDialog
 import com.fastyotest.library.YoTestListener
 
 class MainActivity : AppCompatActivity() {
@@ -18,7 +15,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var viewBinding: ActivityMainBinding
     private lateinit var yoTestCaptchaVerify: YoTestCaptchaVerify
-    private lateinit var yoTestCaptchaDialog: YoTestCaptchaVerifyDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,25 +23,8 @@ class MainActivity : AppCompatActivity() {
 
         yoTestCaptchaVerify = YoTestCaptchaVerify(this, yoTestListener)
         viewBinding.btnLogin.setOnClickListener {
-            AlertDialog.Builder(this).setMessage("TEST TESt").show()
             yoTestCaptchaVerify.verify()
         }
-
-        yoTestCaptchaDialog = YoTestCaptchaVerifyDialog().apply {
-            setActionClickListener(yoTestListener)
-        }
-        viewBinding.btnLoginDialog.setOnClickListener {
-            AlertDialog.Builder(this).setMessage("TEST TESt").show()
-            yoTestCaptchaDialog.show(supportFragmentManager, "YoTestCaptchaVerifyDialog")
-        }
-    }
-
-    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        if (keyCode == KeyEvent.KEYCODE_BACK && yoTestCaptchaVerify.isShow()) {
-            yoTestCaptchaVerify.cancel()
-            return true
-        }
-        return super.onKeyDown(keyCode, event)
     }
 
     private val yoTestListener = object : YoTestListener() {

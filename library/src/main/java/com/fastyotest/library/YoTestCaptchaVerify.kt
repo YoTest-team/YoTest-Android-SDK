@@ -3,44 +3,59 @@ package com.fastyotest.library
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.graphics.drawable.AnimationDrawable
+import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.webkit.*
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.fastyotest.library.utils.VerifyUtils
 import org.json.JSONObject
 
-class YoTestCaptchaVerify(private var context: Activity, private var listener: YoTestListener?) {
+class YoTestCaptchaVerify(private val activity: Activity, private val listener: YoTestListener?) {
+
     @SuppressLint("InflateParams")
-    private val panel: View = LayoutInflater.from(context)
-        .inflate(R.layout.include_yotest_captcha, null)
+    private val panel: View =
+        LayoutInflater.from(activity).inflate(R.layout.include_yotest_captcha, null)
     private val webView: WebView = panel.findViewById(R.id.web_view)
     private val loadingPanel: ConstraintLayout = panel.findViewById(R.id.loading_panel)
-    private val animationDrawable: AnimationDrawable
+    private val animationDrawable: AnimationDrawable =
+        panel.findViewById<ImageView>(R.id.img_loading).background as AnimationDrawable
+
+    private var dialog: AlertDialog? = null
 
     init {
-        val imgLoading: ImageView = panel.findViewById(R.id.img_loading)
-        animationDrawable = imgLoading.background as AnimationDrawable
-        (context.findViewById(android.R.id.content) as ViewGroup).addView(panel)
+        dialog = AlertDialog.Builder(activity)
+            .setCancelable(false)
+            .create()
+        dialog?.window?.apply {
+            setBackgroundDrawable(ColorDrawable(0x00000000))
+            requestFeature(Window.FEATURE_NO_TITLE)
+            setLayout(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                activity.resources.displayMetrics.heightPixels
+            )
+        }
+        loadingPanel.layoutParams = ConstraintLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            activity.resources.displayMetrics.heightPixels
+        )
         loadingPanel.setOnClickListener {
-            cancel()
+            hideVerify()
             listener?.onClose("用户主动关闭")
         }
-        panel.visibility = View.GONE
         initWebView()
     }
 
     fun verify() {
         if (!YoTestCaptcha.initStatus()) {
-            cancel()
             listener?.onError(-1, "init failed")
             return
         }
-
-        panel.visibility = View.VISIBLE
         loadingPanel.visibility = View.VISIBLE
         animationDrawable.start()
         webView.settings.apply {
@@ -48,30 +63,40 @@ class YoTestCaptchaVerify(private var context: Activity, private var listener: Y
         }
         webView.addJavascriptInterface(YoTestJSBridge(), "YoTestCaptcha")
         webView.loadUrl(YoTestCaptcha.getInitResponse()!!.webview)
+        dialog?.setView(panel)
+        dialog?.show()
     }
 
-    fun isShow(): Boolean {
-        return panel.visibility == View.VISIBLE
+    fun onDestroy() {
+        hideVerify()
+        dialog?.setOnDismissListener {
+            webView.destroy()
+        }
+        dialog?.dismiss()
     }
 
-    fun cancel() {
+    private fun hideVerify() {
         hideLoading()
         webView.removeJavascriptInterface("YoTestCaptcha")
         webView.stopLoading()
         webView.loadUrl("")
-        panel.visibility = View.GONE
+        dialog?.hide()
     }
 
-    /**
-     * 销毁资源
-     */
-    fun onDestroy() {
-        cancel()
-        webView.destroy()
+    private fun hideLoading() {
+        if (animationDrawable.isRunning) {
+            animationDrawable.stop()
+        }
+        loadingPanel.visibility = View.GONE
     }
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun initWebView() {
+        CookieManager.getInstance().setAcceptCookie(true)
+        webView.layoutParams = ConstraintLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            activity.resources.displayMetrics.heightPixels
+        )
         webView.setBackgroundColor(0)
         webView.background?.alpha = 0
         webView.settings.apply {
@@ -99,21 +124,21 @@ class YoTestCaptchaVerify(private var context: Activity, private var listener: Y
                 when {
                     url.contains(YoTestCaptcha.getInitResponse()!!.lib) -> {
                         return VerifyUtils.checkInterceptRequest(
-                            context.externalCacheDir,
+                            activity.externalCacheDir,
                             YoTestCaptcha.getInitResponse()!!.lib,
                             "text/javascript"
                         )
                     }
                     url.contains(YoTestCaptcha.getInitResponse()!!.binary) -> {
                         return VerifyUtils.checkInterceptRequest(
-                            context.externalCacheDir,
+                            activity.externalCacheDir,
                             YoTestCaptcha.getInitResponse()!!.binary,
                             "application/json"
                         )
                     }
                     url.contains(YoTestCaptcha.getInitResponse()!!.localWebview) -> {
                         return VerifyUtils.checkInterceptRequest(
-                            context.externalCacheDir,
+                            activity.externalCacheDir,
                             YoTestCaptcha.getInitResponse()!!.localWebview,
                             "text/html"
                         )
@@ -122,13 +147,6 @@ class YoTestCaptchaVerify(private var context: Activity, private var listener: Y
                 return null
             }
         }
-    }
-
-    private fun hideLoading() {
-        if (animationDrawable.isRunning) {
-            animationDrawable.stop()
-        }
-        loadingPanel.visibility = View.GONE
     }
 
     private inner class YoTestJSBridge {
@@ -146,8 +164,8 @@ class YoTestCaptchaVerify(private var context: Activity, private var listener: Y
                     hideLoading()
                 }
                 "onSuccess" -> panel.post {
-                    cancel()
-                    Toast.makeText(context, "已通过友验智能验证", Toast.LENGTH_SHORT).show()
+                    hideVerify()
+                    Toast.makeText(activity, "已通过友验智能验证", Toast.LENGTH_SHORT).show()
                     listener?.onSuccess(
                         data?.optString("token")!!,
                         data.optBoolean("verified")
@@ -157,7 +175,7 @@ class YoTestCaptchaVerify(private var context: Activity, private var listener: Y
                     listener?.onError(data?.optInt("code")!!, data.optString("message"))
                 }
                 "onClose" -> panel.post {
-                    cancel()
+                    hideVerify()
                     listener?.onClose(data?.toString())
                 }
             }

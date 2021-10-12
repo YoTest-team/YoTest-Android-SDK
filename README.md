@@ -112,8 +112,6 @@ YoTestCaptchaVerify实例方法
 
 * [YoTestCaptchaVerify(context, listener)](https://github.com/YoTest-team/YoTest-Android-SDK#YoTestCaptchaVerifycontext-listener)
 * [verify()](https://github.com/YoTest-team/YoTest-Android-SDK#YoTestCaptchaVerifyverify)
-* [isShow()](https://github.com/YoTest-team/YoTest-Android-SDK#YoTestCaptchaVerifyverify)
-* [cancel()](https://github.com/YoTest-team/YoTest-Android-SDK#YoTestCaptchaVerifyverify)
 * [onDestory()](https://github.com/YoTest-team/YoTest-Android-SDK#YoTestCaptchaVerifyverify)
 
 #### init(context, accessId, callback)
@@ -152,4 +150,13 @@ yoTestCaptchaVerify = YoTestCaptchaVerify(this, yoTestListener)
 
 ```kotlin
 yoTestCaptchaVerify.verify()
+```
+
+#### YoTestCaptchaVerify.onDestory()
+- `return`: Unit
+
+用于销毁相关资源
+
+```kotlin
+yoTestCaptchaVerify.onDestory()
 ```
