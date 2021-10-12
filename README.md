@@ -129,6 +129,7 @@ YoTestListener实例方法
     - **message**: \<String\> 提示信息
   - `return:` Unit
 
+一般情况下我们会将init方法放在Application onCreate时进行触发，如果有其他业务相关需求，**请一定确保init方法在verify方法之前调用完成**。
 
 ```kotlin
 YoTestCaptcha.init(
