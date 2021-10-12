@@ -10,6 +10,7 @@ YoTest-Android-SDK 文档
 
 
 ### 仓库入口：
+<a href="https://gitee.com/yo-test-team/yo-test-android-sdk"><img src="./images/gitee2.png" width="32px"/></a>
 <a href="https://github.com/YoTest-team/YoTest-Android-SDK"><img src="./images/GitHub.png" width="32px"/></a>
 
 ### 兼容性
