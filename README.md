@@ -4,6 +4,7 @@ YoTest-Android-SDK 文档
 
 * [仓库入口](https://github.com/YoTest-team/YoTest-Android-SDK#%E4%BB%93%E5%BA%93%E5%85%A5%E5%8F%A3)
 * [兼容性](https://github.com/YoTest-team/YoTest-Android-SDK#%E5%85%BC%E5%AE%B9%E6%80%A7)
+* [示例项目](https://github.com/YoTest-team/YoTest-Android-SDK#%E7%A4%BA%E4%BE%8B%E9%A1%B9%E7%9B%AE)
 * [安装](https://github.com/YoTest-team/YoTest-Android-SDK#%E5%AE%89%E8%A3%85)
 * [快速开始](https://github.com/YoTest-team/YoTest-Android-SDK#%E5%BF%AB%E9%80%9F%E5%BC%80%E5%A7%8B)
 * [API](https://github.com/YoTest-team/YoTest-Android-SDK#api)
@@ -15,6 +16,10 @@ YoTest-Android-SDK 文档
 
 ### 兼容性
 * Android 4.4+ （即API 19+）
+
+### 示例项目
+
+你可以通过Android Studio 4+打开本项目进行示例项目的预览和更改，具体文件请[点击此处](https://github.com/YoTest-team/YoTest-Android-SDK/tree/master/app/src/main/java/com/fastyotest/demo)。
 
 ### 安装
 
