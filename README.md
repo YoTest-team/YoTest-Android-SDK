@@ -160,13 +160,13 @@ yoTestCaptchaVerify = YoTestCaptchaVerify(this, yoTestListener)
 yoTestCaptchaVerify.verify()
 ```
 
-#### YoTestCaptchaVerify.destory()
+#### YoTestCaptchaVerify.destroy()
 - `return`: Unit
 
 用于销毁相关资源
 
 ```kotlin
-yoTestCaptchaVerify.destory()
+yoTestCaptchaVerify.destroy()
 ```
 
 #### YoTestListener.onReady(data)
