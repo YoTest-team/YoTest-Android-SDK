@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
+    id 'maven-publish'
 }
 
 android {
@@ -43,4 +44,62 @@ dependencies {
     testImplementation 'junit:junit:4.15'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+}
+
+def getRepositoryUsername() {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    return properties.getProperty("MAVEN_USERNAME")
+}
+
+def getRepositoryPassword() {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    return properties.getProperty("MAVEN_PASSWORD")
+}
+
+task androidSourcesJar(type: Jar) {
+    if (project.hasProperty("kotlin")) {
+        from android.sourceSets.main.java.getSrcDirs()
+    } else if (project.hasProperty("android")) {
+        from android.sourceSets.main.java.sourceFiles
+    } else {
+        from sourceSets.main.allSource
+    }
+    classifier "sources"
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            releases(MavenPublication) {
+                from components.release
+
+                groupId = "com.fastyotest"
+                artifactId = "captcha"
+                version = VERSION_NAME
+                artifact androidSourcesJar
+            }
+
+            snapshots(MavenPublication) {
+                from components.debug
+
+                groupId = "com.fastyotest"
+                artifactId = "captcha"
+                version = VERSION_NAME
+                artifact androidSourcesJar
+            }
+        }
+
+        repositories {
+            maven {
+                allowInsecureProtocol = true
+                url = VERSION_NAME.endsWith('SNAPSHOT') ? "http://localhost:8081/repository/maven-snapshots/" : "http://localhost:8081/repository/maven-releases"
+                credentials {
+                    username = getRepositoryUsername()
+                    password = getRepositoryPassword()
+                }
+            }
+        }
+    }
 }

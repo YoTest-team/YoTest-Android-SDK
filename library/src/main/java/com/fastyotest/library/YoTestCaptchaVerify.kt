@@ -27,6 +27,8 @@ class YoTestCaptchaVerify(private val activity: Activity, private val listener: 
         panel.findViewById<ImageView>(R.id.img_loading).background as AnimationDrawable
 
     private var dialog: AlertDialog? = null
+    var showLoading = true
+    var showToast = true
 
     init {
         dialog = AlertDialog.Builder(activity)
@@ -56,15 +58,20 @@ class YoTestCaptchaVerify(private val activity: Activity, private val listener: 
             listener?.onError(-1, "init failed")
             return
         }
-        loadingPanel.visibility = View.VISIBLE
-        animationDrawable.start()
-        webView.settings.apply {
-            userAgentString += "YoTest_Android/${YoTestCaptcha.getInitResponse()!!.version}"
+        if (!webView.settings.userAgentString.contains("YoTest")) {
+            webView.settings.apply {
+                userAgentString += " YoTest_Android/${YoTestCaptcha.getInitResponse()!!.version}"
+            }
         }
         webView.addJavascriptInterface(YoTestJSBridge(), "YoTestCaptcha")
         webView.loadUrl(YoTestCaptcha.getInitResponse()!!.webview)
-        dialog?.setView(panel)
-        dialog?.show()
+
+        if (showLoading) {
+            loadingPanel.visibility = View.VISIBLE
+            animationDrawable.start()
+            dialog?.setView(panel)
+            dialog?.show()
+        }
     }
 
     fun destroy() {
@@ -120,7 +127,6 @@ class YoTestCaptchaVerify(private val activity: Activity, private val listener: 
                 if (url.isNullOrEmpty()) {
                     return null
                 }
-                // 替换成本地的资源
                 when {
                     url.contains(YoTestCaptcha.getInitResponse()!!.lib) -> {
                         return VerifyUtils.checkInterceptRequest(
@@ -163,11 +169,19 @@ class YoTestCaptchaVerify(private val activity: Activity, private val listener: 
                 "onShow" -> panel.post {
                     hideLoading()
                     webView.visibility = View.VISIBLE
+                    dialog?.let {
+                        if (!it.isShowing) {
+                            it.setView(panel)
+                            it.show()
+                        }
+                    }
                     listener?.onShow(data?.toString())
                 }
                 "onSuccess" -> panel.post {
                     hideVerify()
-                    Toast.makeText(activity, "已通过友验智能验证", Toast.LENGTH_SHORT).show()
+                    if (showToast) {
+                        Toast.makeText(activity, "已通过友验智能验证", Toast.LENGTH_SHORT).show()
+                    }
                     listener?.onSuccess(
                         data?.optString("token")!!,
                         data.optBoolean("verified")

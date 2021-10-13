@@ -29,7 +29,6 @@ object YoTestCaptcha {
             while (initRepeatCount < 3) {
                 val result = NetworkUtils.sendRequest(INIT_API)
                 if (!result.isNullOrEmpty()) {
-                    // 解析数据
                     val jsonObject = JSONObject(result).optJSONObject("data")
                     initResponse = InitResponse(
                         checkProtocol(jsonObject?.optString("api")),
@@ -72,7 +71,6 @@ object YoTestCaptcha {
         applicationContext?.let {
             val file = File(it.externalCacheDir, fileName)
             if (!file.exists()) {
-                // 进行文件下载，下载成功之后，更新文件路径
                 Thread {
                     if (NetworkUtils.downloadFile(downloadUrl, file)) {
                         when (type) {

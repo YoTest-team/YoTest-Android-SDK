@@ -2,6 +2,7 @@ package com.fastyotest.demo
 
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.fastyotest.demo.databinding.ActivityMainBinding
 import com.fastyotest.library.YoTestCaptchaVerify
@@ -15,6 +16,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var viewBinding: ActivityMainBinding
     private lateinit var yoTestCaptchaVerify: YoTestCaptchaVerify
+    private var dialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,14 +25,20 @@ class MainActivity : AppCompatActivity() {
 
         yoTestCaptchaVerify = YoTestCaptchaVerify(this, yoTestListener)
         viewBinding.btnLogin.setOnClickListener {
-            yoTestCaptchaVerify.verify()
+            login()
         }
+        viewBinding.showLoading.setOnCheckedChangeListener { _, isChecked ->
+            yoTestCaptchaVerify.showLoading = isChecked
+        }
+        viewBinding.showToast.setOnCheckedChangeListener { _, isChecked ->
+            yoTestCaptchaVerify.showToast = isChecked
+        }
+    }
 
-        val yoTestCaptchaVerify = YoTestCaptchaVerify(this, object : YoTestListener() {
-            override fun onReady(data: String?) {
-                Log.d(TAG, "onReady: $data")
-            }
-        })
+    private fun login() {
+        if (!yoTestCaptchaVerify.showLoading) {
+            dialog = AlertDialog.Builder(this).setMessage("加载中...").show()
+        }
         yoTestCaptchaVerify.verify()
     }
 
@@ -41,6 +49,7 @@ class MainActivity : AppCompatActivity() {
 
         override fun onShow(data: String?) {
             Log.d(TAG, "onShow: $data")
+            dialog?.dismiss()
         }
 
         override fun onSuccess(token: String, verified: Boolean) {

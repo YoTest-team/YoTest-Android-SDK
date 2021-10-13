@@ -51,10 +51,8 @@ object NetworkUtils {
             conn = URL(url).openConnection() as HttpsURLConnection
             conn.connectTimeout = 5000
             val start: Long = file.length()
-            //设置请求属性，请求制定范围的文件流
             conn.setRequestProperty("Range", "bytes=$start-")
             contentLength = conn.contentLength.toLong()
-            //移动RandomAccessFile写入位置，从上次完成的位置开始
             raf.seek(start)
             bis = BufferedInputStream(conn.inputStream)
             while (-1 != bis.read(buffer).also { len = it }) {
