@@ -111,7 +111,7 @@ YoTestCaptchaVerify实例方法
 
 * [YoTestCaptchaVerify(context, listener)](https://github.com/YoTest-team/YoTest-Android-SDK#YoTestCaptchaVerifycontext-listener)
 * [verify()](https://github.com/YoTest-team/YoTest-Android-SDK#YoTestCaptchaVerifyverify)
-* [destroy()](https://github.com/YoTest-team/YoTest-Android-SDK#YoTestCaptchaVerifydestory)
+* [destroy()](https://github.com/YoTest-team/YoTest-Android-SDK#yotestcaptchaverifydestroy)
 
 YoTestListener实例方法
 
