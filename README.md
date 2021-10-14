@@ -1,5 +1,7 @@
 YoTest-Android-SDK 文档
 ----
+[![](https://jitpack.io/v/YoTest-team/YoTest-Android-SDK.svg)](https://jitpack.io/#YoTest-team/YoTest-Android-SDK)
+
 > 基于虚拟机保护、设备特征识别和操作行为识别的新一代智能验证码，具备智能评分、抗Headless、模拟伪装、针对恶意设备自动提升验证难度等多项安全措施，帮助开发者减少恶意攻击导致的数字资产损失，强力护航业务安全。
 
 * [仓库入口](https://github.com/YoTest-team/YoTest-Android-SDK#%E4%BB%93%E5%BA%93%E5%85%A5%E5%8F%A3)
@@ -26,9 +28,9 @@ YoTest-Android-SDK 文档
 在工程根目录的build.gradle中添加
 
 ```groovy
-buildscript {
+allprojects {
     repositories {
-        mavenCentral()
+        maven { url "https://jitpack.io" }
     }
 }
 ```
@@ -43,7 +45,7 @@ android {
 }
 
 dependencies {
-  implementation 'com.fastyotest:captcha:x.x.x'
+implementation 'com.github.YoTest-team:YoTest-Android-SDK:{latest version}'
 }
 ```
 
