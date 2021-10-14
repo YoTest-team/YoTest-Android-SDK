@@ -46,18 +46,6 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 }
 
-def getRepositoryUsername() {
-    Properties properties = new Properties()
-    properties.load(project.rootProject.file('local.properties').newDataInputStream())
-    return properties.getProperty("MAVEN_USERNAME")
-}
-
-def getRepositoryPassword() {
-    Properties properties = new Properties()
-    properties.load(project.rootProject.file('local.properties').newDataInputStream())
-    return properties.getProperty("MAVEN_PASSWORD")
-}
-
 task androidSourcesJar(type: Jar) {
     if (project.hasProperty("kotlin")) {
         from android.sourceSets.main.java.getSrcDirs()
@@ -75,30 +63,19 @@ afterEvaluate {
             releases(MavenPublication) {
                 from components.release
 
-                groupId = "com.fastyotest"
-                artifactId = "captcha"
+                groupId = "com.github.YoTest-team"
+                artifactId = "YoTest-Android-SDK"
                 version = VERSION_NAME
                 artifact androidSourcesJar
             }
 
-            snapshots(MavenPublication) {
+            debug(MavenPublication) {
                 from components.debug
 
-                groupId = "com.fastyotest"
-                artifactId = "captcha"
+                groupId = "com.github.YoTest-team"
+                artifactId = "YoTest-Android-SDK"
                 version = VERSION_NAME
                 artifact androidSourcesJar
-            }
-        }
-
-        repositories {
-            maven {
-                allowInsecureProtocol = true
-                url = VERSION_NAME.endsWith('SNAPSHOT') ? "http://localhost:8081/repository/maven-snapshots/" : "http://localhost:8081/repository/maven-releases"
-                credentials {
-                    username = getRepositoryUsername()
-                    password = getRepositoryPassword()
-                }
             }
         }
     }
