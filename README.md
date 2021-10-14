@@ -38,14 +38,14 @@ allprojects {
 
 ```groovy
 android {
-  compileOptions {
-    sourceCompatibility JavaVersion.VERSION_1_8
-    targetCompatibility JavaVersion.VERSION_1_8
-  }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
-implementation 'com.github.YoTest-team:YoTest-Android-SDK:{latest version}'
+    implementation 'com.github.YoTest-team:YoTest-Android-SDK:{latest version}'
 }
 ```
 
