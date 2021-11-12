@@ -21,7 +21,7 @@ class YoTestCaptchaVerify(private val activity: Activity, private val listener: 
     @SuppressLint("InflateParams")
     private val panel: View =
         LayoutInflater.from(activity).inflate(R.layout.include_yotest_captcha, null)
-    private val webView: WebView = panel.findViewById(R.id.web_view)
+    private val webView: CustomWebView = panel.findViewById(R.id.web_view)
     private val loadingPanel: ConstraintLayout = panel.findViewById(R.id.loading_panel)
     private val animationDrawable: AnimationDrawable =
         panel.findViewById<ImageView>(R.id.img_loading).background as AnimationDrawable
