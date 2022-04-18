@@ -59,6 +59,9 @@ public class JavaMainActivity extends AppCompatActivity {
             viewBinding.txtCallback.append("====================\n");
             viewBinding.txtCallback.append(getSpannableString("onReady"));
             viewBinding.txtCallback.append(": " + data + "\n");
+            if (dialog != null) {
+                dialog.dismiss();
+            }
         }
 
         @Override
@@ -76,6 +79,9 @@ public class JavaMainActivity extends AppCompatActivity {
             Log.d(TAG, "onSuccess: token=" + token + "; verified=" + verified);
             viewBinding.txtCallback.append(getSpannableString("onSuccess"));
             viewBinding.txtCallback.append(": token=" + token + "; verified=" + verified + "\n");
+            if (dialog != null) {
+                dialog.dismiss();
+            }
         }
 
         @Override
@@ -83,6 +89,9 @@ public class JavaMainActivity extends AppCompatActivity {
             Log.d(TAG, "onError: code=" + code + "; message=" + message);
             viewBinding.txtCallback.append(getSpannableString("onError"));
             viewBinding.txtCallback.append(": code=" + code + "; message=" + message + "\n");
+            if (dialog != null) {
+                dialog.dismiss();
+            }
         }
 
         @Override
@@ -90,6 +99,9 @@ public class JavaMainActivity extends AppCompatActivity {
             Log.d(TAG, "onClose: " + data);
             viewBinding.txtCallback.append(getSpannableString("onClose"));
             viewBinding.txtCallback.append(": " + data + "\n");
+            if (dialog != null) {
+                dialog.dismiss();
+            }
         }
     };
 
