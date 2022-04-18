@@ -45,7 +45,7 @@ android {
 }
 
 dependencies {
-    implementation 'com.github.YoTest-team:YoTest-Android-SDK:1.0.0'
+    implementation 'com.github.YoTest-team:YoTest-Android-SDK:1.0.2'
 }
 ```
 

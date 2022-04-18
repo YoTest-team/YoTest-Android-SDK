@@ -5,7 +5,7 @@ import android.util.Log;
 
 import com.fastyotest.library.YoTestCaptcha;
 
-public class MyApplication1 extends Application {
+public class JavaMyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
