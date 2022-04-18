@@ -20,6 +20,7 @@ object YoTestCaptcha {
         return this.initResponse
     }
 
+    @JvmStatic
     fun init(context: Context, accessId: String, onResult: (code: Int, message: String) -> Unit) {
         this.accessId = accessId
         this.applicationContext = context.applicationContext
@@ -55,7 +56,7 @@ object YoTestCaptcha {
         }.start()
     }
 
-    fun initStatus(): Boolean {
+    internal fun initStatus(): Boolean {
         if (initResponse == null || initResponse?.webview.isNullOrEmpty()) {
             return false
         }
