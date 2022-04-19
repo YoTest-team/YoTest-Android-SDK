@@ -33,6 +33,7 @@ class YoTestCaptchaVerify(private val activity: Activity, private val listener: 
     init {
         dialog = AlertDialog.Builder(activity)
             .setCancelable(false)
+            .setView(panel)
             .create()
         dialog?.window?.apply {
             setBackgroundDrawable(ColorDrawable(0x00000000))
@@ -66,11 +67,13 @@ class YoTestCaptchaVerify(private val activity: Activity, private val listener: 
         webView.addJavascriptInterface(YoTestJSBridge(), "YoTestCaptcha")
         webView.loadUrl(YoTestCaptcha.getInitResponse()!!.webview)
 
+        dialog?.show()
         if (showLoading) {
             loadingPanel.visibility = View.VISIBLE
             animationDrawable.start()
-            dialog?.setView(panel)
-            dialog?.show()
+        } else {
+            loadingPanel.visibility = View.GONE
+            dialog?.hide()
         }
     }
 
@@ -163,21 +166,20 @@ class YoTestCaptchaVerify(private val activity: Activity, private val listener: 
             val action = jsonObject.optString("action")
             val data = jsonObject.optJSONObject("data")
             when (action) {
-                "onReady" -> panel.post {
+                "onReady" -> activity.window.decorView.post {
                     listener?.onReady(data?.toString())
                 }
-                "onShow" -> panel.post {
+                "onShow" -> activity.window.decorView.post {
                     hideLoading()
                     webView.visibility = View.VISIBLE
                     dialog?.let {
                         if (!it.isShowing) {
-                            it.setView(panel)
                             it.show()
                         }
                     }
                     listener?.onShow(data?.toString())
                 }
-                "onSuccess" -> panel.post {
+                "onSuccess" -> activity.window.decorView.post {
                     hideVerify()
                     if (showToast) {
                         Toast.makeText(activity, "已通过友验智能验证", Toast.LENGTH_SHORT).show()
@@ -187,10 +189,10 @@ class YoTestCaptchaVerify(private val activity: Activity, private val listener: 
                         data.optBoolean("verified")
                     )
                 }
-                "onError" -> panel.post {
+                "onError" -> activity.window.decorView.post {
                     listener?.onError(data?.optInt("code")!!, data.optString("message"))
                 }
-                "onClose" -> panel.post {
+                "onClose" -> activity.window.decorView.post {
                     hideVerify()
                     listener?.onClose(data?.toString())
                 }

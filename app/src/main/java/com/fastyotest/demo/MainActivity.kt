@@ -59,7 +59,6 @@ class MainActivity : AppCompatActivity() {
             viewBinding.txtCallback.append("====================\n")
             viewBinding.txtCallback.append(getSpannableString("onReady"))
             viewBinding.txtCallback.append(": $data\n")
-            dialog?.dismiss()
         }
 
         override fun onShow(data: String?) {
@@ -73,21 +72,18 @@ class MainActivity : AppCompatActivity() {
             Log.d(TAG, "onSuccess: token=$token; verified=$verified")
             viewBinding.txtCallback.append(getSpannableString("onSuccess"))
             viewBinding.txtCallback.append(": token=$token; verified=$verified\n")
-            dialog?.dismiss()
         }
 
         override fun onError(code: Int, message: String) {
             Log.d(TAG, "onError: code=$code; message=$message")
             viewBinding.txtCallback.append(getSpannableString("onError"))
             viewBinding.txtCallback.append(": code=$code; message=$message\n")
-            dialog?.dismiss()
         }
 
         override fun onClose(data: String?) {
             Log.d(TAG, "onClose: $data")
             viewBinding.txtCallback.append(getSpannableString("onClose"))
             viewBinding.txtCallback.append(": $data\n")
-            dialog?.dismiss()
         }
     }
 
