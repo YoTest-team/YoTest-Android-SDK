@@ -73,16 +73,15 @@ class YoTestCaptchaVerify(private val activity: Activity, private val listener: 
             animationDrawable.start()
         } else {
             loadingPanel.visibility = View.GONE
-            dialog?.hide()
+            dialog?.dismiss()
         }
     }
 
     fun destroy() {
-        hideVerify()
         dialog?.setOnDismissListener {
             webView.destroy()
         }
-        dialog?.dismiss()
+        hideVerify()
     }
 
     private fun hideVerify() {
@@ -90,7 +89,7 @@ class YoTestCaptchaVerify(private val activity: Activity, private val listener: 
         webView.removeJavascriptInterface("YoTestCaptcha")
         webView.stopLoading()
         webView.visibility = View.GONE
-        dialog?.hide()
+        dialog?.dismiss()
     }
 
     private fun hideLoading() {
